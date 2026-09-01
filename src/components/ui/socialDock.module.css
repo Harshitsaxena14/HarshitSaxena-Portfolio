@@ -1,0 +1,295 @@
+/*
+ * socialDock.module.css
+ *
+ * Animation logic adapted from the reference tooltip component.
+ * All hover interactions are pure CSS — zero JS overhead.
+ * Framer Motion is used only for the one-time entrance stagger in the TSX.
+ *
+ * DO NOT import in globals.css.
+ */
+
+/* ─── Container ──────────────────────────────────────────────────────────── */
+
+.container {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ─── Item wrapper ───────────────────────────────────────────────────────── */
+/* position: relative is required for the absolutely-placed tooltip */
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+ * Invisible hover-bridge pseudo-element.
+ * Fills the gap between the button top and the tooltip bottom so that
+ * moving the cursor upward from button → tooltip never interrupts the
+ * hover state (same pattern used in macOS menu hover bridging).
+ */
+.item::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: -8px;
+  right: -8px;
+  height: 14px; /* matches tooltip offset gap */
+  background: transparent;
+}
+
+/* ─── Button ─────────────────────────────────────────────────────────────── */
+
+.btn {
+  /* Layout */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+
+  /* Size — mobile first */
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  /* Dark glass surface */
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  /* Resting shadow — subtle depth */
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  /*
+   * Transition — spring-like cubic-bezier adapted from reference component.
+   * 0.34, 1.4, 0.64, 1 gives a slight overshoot (spring) without cartoonish
+   * bounce. shadow/border/bg follow a linear ease for smoothness.
+   */
+  transition:
+    transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1),
+    box-shadow 0.28s ease,
+    border-color 0.22s ease,
+    background-color 0.22s ease;
+
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  .btn {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .btn {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* ── Focus ring — keyboard navigation ─────────────────────────────────────── */
+.btn:focus-visible {
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.5),
+    0 0 0 4px rgba(0, 0, 0, 0.8),
+    0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Press state ──────────────────────────────────────────────────────────── */
+.btn:active {
+  transform: translateY(-3px) scale(0.94);
+  transition-duration: 0.08s;
+}
+
+/* ─── Icon ───────────────────────────────────────────────────────────────── */
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Resting colour */
+  color: rgba(255, 255, 255, 0.38);
+  pointer-events: none;
+  /* Icon follows the same spring as the button */
+  transition:
+    color 0.22s ease,
+    transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* ─── Hover — button rises, shadow opens, icon brightens ─────────────────── */
+/*
+ * Reference: .doodle-link:hover { transform: translateY(-8px) scale(1.1); }
+ * Adapted: scale reduced slightly (1.08) for premium restraint.
+ */
+
+.btn:hover {
+  transform: translateY(-8px) scale(1.08);
+  border-color: rgba(255, 255, 255, 0.13);
+}
+
+.btn:hover .icon {
+  transform: scale(1.1);
+}
+
+/* ── GitHub — white glow ──────────────────────────────────────────────────── */
+.github:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 10px 28px rgba(255, 255, 255, 0.10),
+    0 2px 8px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.github:hover .icon {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* ── LinkedIn — #0A66C2 ───────────────────────────────────────────────────── */
+.linkedin:hover {
+  background-color: rgba(10, 102, 194, 0.10);
+  border-color: rgba(10, 102, 194, 0.28);
+  box-shadow:
+    0 10px 28px rgba(10, 102, 194, 0.20),
+    0 2px 8px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(10, 102, 194, 0.10);
+}
+.linkedin:hover .icon {
+  color: #0A66C2;
+}
+
+/* ── LeetCode — #FFA116 ───────────────────────────────────────────────────── */
+.leetcode:hover {
+  background-color: rgba(255, 161, 22, 0.07);
+  border-color: rgba(255, 161, 22, 0.24);
+  box-shadow:
+    0 10px 28px rgba(255, 161, 22, 0.16),
+    0 2px 8px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 161, 22, 0.07);
+}
+.leetcode:hover .icon {
+  color: #FFA116;
+}
+
+/* ── Email — cyan accent ──────────────────────────────────────────────────── */
+.email:hover {
+  background-color: rgba(34, 211, 238, 0.06);
+  border-color: rgba(34, 211, 238, 0.20);
+  box-shadow:
+    0 10px 28px rgba(34, 211, 238, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(34, 211, 238, 0.06);
+}
+.email:hover .icon {
+  color: #22d3ee;
+}
+
+/* ─── Tooltip ────────────────────────────────────────────────────────────── */
+/*
+ * Reference: .doodle-tooltip — absolute, starts low, transitions upward.
+ * Adapted: dark Apple/Linear floating label. No comic borders, no colors.
+ * Same visibility + opacity + translateY pattern as reference.
+ */
+
+.tooltip {
+  position: absolute;
+  /* Sits 10px above the button top edge */
+  bottom: calc(100% + 10px);
+  left: 50%;
+
+  /* Resting state — hidden and shifted 6px down */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(6px);
+
+  /* Premium dark surface */
+  padding: 5px 10px;
+  background: rgba(16, 16, 18, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 7px;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.55),
+    0 1px 4px rgba(0, 0, 0, 0.3);
+
+  /* Label typography — small, mono-spaced, muted */
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: ui-monospace, "SF Mono", Menlo, "Roboto Mono", monospace;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 30;
+
+  /*
+   * Transition — adapted from reference cubic-bezier(0.68, -0.55, 0.265, 1.55)
+   * Toned down to (0.16, 1, 0.3, 1) for elegant easeOutExpo feel.
+   * visibility delay matches opacity duration so it collapses cleanly.
+   */
+  transition:
+    opacity 0.22s ease,
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 0.22s;
+}
+
+/* ── Tooltip triangle — pointing down ─────────────────────────────────────── */
+/*
+ * Reference: .doodle-tooltip::after — bottom triangle.
+ * Adapted: rotated square instead of border-hack for border-matching.
+ */
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 5px);
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: rgba(16, 16, 18, 0.96);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+/* ── Show tooltip on item hover ───────────────────────────────────────────── */
+.item:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  /* Override the hide-delay so tooltip appears instantly */
+  transition:
+    opacity 0.22s ease,
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 0s;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .icon,
+  .tooltip {
+    transition: opacity 0.15s ease, visibility 0s linear 0.15s;
+  }
+
+  .item:hover .tooltip {
+    transition: opacity 0.15s ease, visibility 0s linear 0s;
+  }
+
+  .btn:hover,
+  .btn:hover .icon {
+    transform: none;
+  }
+}
