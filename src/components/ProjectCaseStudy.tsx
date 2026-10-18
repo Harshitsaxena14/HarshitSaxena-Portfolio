@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform, useSpring } from "framer-motion";
 import {
   Github,
@@ -33,6 +34,11 @@ export interface Project {
   accentHue: number;
   liveUrl?: string;
   githubUrl?: string;
+  isFeatured?: boolean;
+  featuredBadge?: string;
+  previewImage?: string;
+  logoSvg?: string;
+  verifiedModules?: { label: string; detail: string }[];
 }
 
 // ─── Real Authentic Project Data ──────────────────────────────────────────────
@@ -85,6 +91,50 @@ const PROJECTS: Project[] = [
     tech: ["Next.js 14", "TypeScript", "Tailwind CSS", "Framer Motion", "GraphQL"],
     accentHue: 45,
     githubUrl: "https://github.com/harshitsaxena",
+  },
+  {
+    id: "codement",
+    title: "CodeMent",
+    tagline: "Adaptive DSA Learning Platform & Extension",
+    description:
+      "A structured, adaptive DSA learning platform designed to help developers master Data Structures & Algorithms through a guided 25+ topic roadmap, progress tracking, an AI mentor powered by Google Gemini, and a Manifest V3 Chrome extension for live LeetCode synchronization.",
+    problem:
+      "Most developers face severe friction learning DSA: solving random LeetCode problems without structured topic progression, forgetting previously solved patterns, lacking weak-topic diagnosis, and having no contextual AI guidance while actively solving.",
+    architecture:
+      "Full-stack decoupled architecture with a React 19 + Vite + Tailwind CSS frontend, Node.js + Express backend with MongoDB & JWT authentication, Google Gemini AI integration, and a Manifest V3 Chrome extension injecting content scripts into leetcode.com/problems/* to detect problem slugs and sync learning telemetry.",
+    features: [
+      "Structured 25+ topic DSA roadmap with progressive unlock mechanics",
+      "AI Mentor powered by Google Gemini for conceptual hints & problem breakdowns",
+      "Manifest V3 Chrome extension detecting active LeetCode problems in real time",
+      "Progress dashboard with topic mastery telemetry & spaced repetition revision",
+      "Mission planner and contest tracking with JWT-authenticated user accounts",
+    ],
+    challenges:
+      "Bridging the decoupled browser extension runtime with the web app state to reliably detect LeetCode problem slugs and synchronize user progress without latency or auth desync.",
+    lessons:
+      "Connecting structured curriculum directly into the developer's live problem-solving context (via browser extension) yields vastly higher retention than isolated problem databases.",
+    tech: [
+      "React 19",
+      "Vite",
+      "Node.js",
+      "Express",
+      "MongoDB",
+      "Gemini AI",
+      "Chrome Extension (MV3)",
+      "Tailwind CSS",
+    ],
+    accentHue: 270,
+    githubUrl: "https://github.com/Harshitsaxena14/CodeMent",
+    isFeatured: true,
+    featuredBadge: "FLAGSHIP // ADAPTIVE DSA PLATFORM",
+    previewImage: "/projects/codement/hero.png",
+    logoSvg: "/projects/codement/logo.svg",
+    verifiedModules: [
+      { label: "CURRICULUM", detail: "25+ Topics & Unlocks" },
+      { label: "AI MENTOR", detail: "Gemini Context Hints" },
+      { label: "SYNC EXTENSION", detail: "LeetCode Manifest V3" },
+      { label: "AUTH & DATA", detail: "Express + Mongo + JWT" },
+    ],
   },
   {
     id: "sahayak",
@@ -516,14 +566,23 @@ export default function ProjectCaseStudy() {
 
                 {/* Header info */}
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="w-2.5 h-2.5 rounded-full"
-                      style={{ backgroundColor: `hsl(${selectedProject.accentHue}, 75%, 55%)` }}
-                    />
-                    <span className="font-mono text-xs text-emerald-400 font-semibold uppercase tracking-wider">
-                      {selectedProject.tagline}
-                    </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {selectedProject.isFeatured ? (
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-500/40 text-purple-300 font-mono text-[11px] font-bold uppercase tracking-wider">
+                        <Sparkles size={12} className="text-purple-400 animate-pulse" />
+                        <span>{selectedProject.featuredBadge || "FLAGSHIP PROJECT"}</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full"
+                          style={{ backgroundColor: `hsl(${selectedProject.accentHue}, 75%, 55%)` }}
+                        />
+                        <span className="font-mono text-xs text-emerald-400 font-semibold uppercase tracking-wider">
+                          {selectedProject.tagline}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <h3 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
                     {selectedProject.title}
@@ -532,6 +591,47 @@ export default function ProjectCaseStudy() {
                     {selectedProject.description}
                   </p>
                 </div>
+
+                {/* Verified Modules Telemetry Strip (for CodeMent Flagship) */}
+                {selectedProject.verifiedModules && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                    {selectedProject.verifiedModules.map((m, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-xl border border-purple-500/20 bg-purple-950/20 space-y-1"
+                      >
+                        <span className="font-mono text-[9px] text-purple-300/80 uppercase tracking-widest block">
+                          {m.label}
+                        </span>
+                        <span className="font-mono text-xs font-bold text-white block">
+                          {m.detail}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Authentic Visual Preview (if project has previewImage asset) */}
+                {selectedProject.previewImage && (
+                  <div className="rounded-xl border border-white/[0.08] bg-black/60 p-4 space-y-3">
+                    <div className="flex items-center justify-between font-mono text-[10px] text-white/40 pb-2 border-b border-white/[0.06]">
+                      <span className="flex items-center gap-1.5 text-purple-400 font-semibold">
+                        <Sparkles size={11} />
+                        AUTHENTIC PLATFORM ASSET // CODEMENT HERO ARCHIVE
+                      </span>
+                      <span className="text-white/30">SOURCE: CODEMENT/FRONTEND/SRC/ASSETS</span>
+                    </div>
+                    <div className="flex items-center justify-center p-4 bg-[#050508] rounded-lg border border-white/[0.04]">
+                      <Image
+                        src={selectedProject.previewImage}
+                        alt="CodeMent Platform Asset"
+                        width={343}
+                        height={361}
+                        className="max-h-48 w-auto object-contain rounded drop-shadow-[0_0_25px_rgba(168,85,247,0.3)]"
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {/* Grid Details */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
@@ -607,6 +707,25 @@ export default function ProjectCaseStudy() {
                   </div>
 
                   <div className="flex items-center gap-3 shrink-0">
+                    {!selectedProject.liveUrl && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-mono text-white/50 bg-white/[0.04] border border-white/[0.08]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                        <span>LOCAL REPO VERIFIED</span>
+                      </span>
+                    )}
+
+                    {selectedProject.liveUrl && (
+                      <a
+                        href={selectedProject.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-medium text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 hover:bg-emerald-900/40 transition-all"
+                      >
+                        <ExternalLink size={14} />
+                        <span>LIVE DEMO</span>
+                      </a>
+                    )}
+
                     {selectedProject.githubUrl && (
                       <a
                         href={selectedProject.githubUrl}

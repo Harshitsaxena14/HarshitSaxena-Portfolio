@@ -71,7 +71,10 @@ export default function CardFanCarousel({ projects, onSelectProject }: CardFanCa
 
   const totalCards = projects.length;
   const needsPagination = totalCards > MAX_VISIBLE;
-  const [centerIndex, setCenterIndex] = useState(needsPagination ? HALF : totalCards >> 1);
+  const featuredIndex = projects.findIndex((p) => p.isFeatured);
+  const [centerIndex, setCenterIndex] = useState(
+    featuredIndex !== -1 ? featuredIndex : needsPagination ? HALF : totalCards >> 1
+  );
 
   const getVisibleMap = useCallback(
     (center: number) => {
@@ -346,30 +349,45 @@ export default function CardFanCarousel({ projects, onSelectProject }: CardFanCa
                 onMouseMove={handleCardMouseMove}
                 onMouseLeave={handleCardMouseLeave}
                 onClick={() => onSelectProject(project)}
-                className="fan-card absolute w-[290px] sm:w-[340px] md:w-[380px] rounded-2xl border border-white/10 hover:border-emerald-500/50 bg-[#09090e]/95 p-6 sm:p-7 flex flex-col justify-between cursor-pointer transition-colors duration-300 shadow-2xl backdrop-blur-xl group select-none overflow-hidden"
+                className={`fan-card absolute w-[290px] sm:w-[340px] md:w-[380px] rounded-2xl border ${
+                  project.isFeatured
+                    ? "border-purple-500/50 hover:border-purple-400 bg-[#0c0914]/95 shadow-[0_0_35px_rgba(168,85,247,0.25)]"
+                    : "border-white/10 hover:border-emerald-500/50 bg-[#09090e]/95"
+                } p-6 sm:p-7 flex flex-col justify-between cursor-pointer transition-colors duration-300 shadow-2xl backdrop-blur-xl group select-none overflow-hidden`}
                 style={{
                   transformStyle: "preserve-3d",
-                  boxShadow: `0 20px 50px rgba(0,0,0,0.7), 0 0 30px ${accentColor}15`,
+                  boxShadow: project.isFeatured
+                    ? `0 24px 60px rgba(0,0,0,0.8), 0 0 40px rgba(168,85,247,0.3)`
+                    : `0 20px 50px rgba(0,0,0,0.7), 0 0 30px ${accentColor}15`,
                 }}
               >
                 {/* Background Ambient Radial Glow */}
                 <div
-                  className="absolute inset-0 opacity-15 group-hover:opacity-30 transition-opacity duration-500 pointer-events-none -z-10"
+                  className="absolute inset-0 opacity-15 group-hover:opacity-35 transition-opacity duration-500 pointer-events-none -z-10"
                   style={{
                     background: `radial-gradient(circle at 50% 20%, ${accentColor}, transparent 70%)`,
                   }}
                 />
 
                 <div className="space-y-4">
-                  {/* Top Bar: Index badge & links */}
+                  {/* Top Bar: Index badge, Featured tag & links */}
                   <div className="flex items-center justify-between font-mono text-xs">
-                    <span className="text-white/40 group-hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-semibold">
-                      <span
-                        className="w-2 h-2 rounded-full animate-pulse"
-                        style={{ backgroundColor: accentColor }}
-                      />
-                      0{index + 1} // PROJECT
-                    </span>
+                    <div className="flex items-center gap-2">
+                      {project.isFeatured && (
+                        <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold tracking-wider uppercase bg-purple-500/20 text-purple-300 border border-purple-500/40 flex items-center gap-1 shadow-sm">
+                          <Sparkles size={9} className="text-purple-300 animate-pulse" />
+                          FLAGSHIP
+                        </span>
+                      )}
+                      <span className="text-white/40 group-hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-semibold">
+                        <span
+                          className="w-2 h-2 rounded-full animate-pulse"
+                          style={{ backgroundColor: accentColor }}
+                        />
+                        0{index + 1} // PROJECT
+                      </span>
+                    </div>
+
                     <div className="flex items-center gap-2">
                       {project.githubUrl && (
                         <a

@@ -1,10 +1,16 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 export default function Footer() {
   const year = new Date().getFullYear();
   const prefersReducedMotion = useReducedMotion();
+  const [motionReady, setMotionReady] = useState(false);
+
+  useEffect(() => {
+    setMotionReady(true);
+  }, []);
 
   return (
     <footer
@@ -12,11 +18,10 @@ export default function Footer() {
       className="w-full border-t border-border-subtle bg-black"
     >
       <motion.div
-        initial={{ opacity: prefersReducedMotion ? 1 : 0 }}
+        initial={{ opacity: motionReady && prefersReducedMotion ? 1 : 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        suppressHydrationWarning
         className="max-w-[1080px] mx-auto px-6 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
       >
         {/* Left: Identity */}
