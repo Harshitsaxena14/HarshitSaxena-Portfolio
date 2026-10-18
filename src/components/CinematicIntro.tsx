@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
+import Image from "next/image";
 import { ArrowRight, User, Camera, ShieldCheck, Sparkles } from "lucide-react";
 
 interface CinematicIntroProps {
@@ -18,7 +19,6 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
   const [imageError, setImageError] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Magnetic Button Spring Interaction
   const handleButtonMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (prefersReducedMotion || !buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
@@ -262,9 +262,11 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
               {/* Photo Reveal Slot */}
               <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#050508] rounded-b-xl border-x border-b border-white/[0.08] flex items-center justify-center">
                 {!imageError ? (
-                  <img
+                  <Image
                     src="/harshit_photo.jpg"
                     alt="Harshit Saxena — Professional Portrait"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 380px"
                     onError={() => setImageError(true)}
                     className="w-full h-full object-cover object-center filter grayscale contrast-105 group-hover:grayscale-0 transition-all duration-700"
                   />
