@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
 import { FileText, ArrowDown, Terminal, Cpu, Layers } from "lucide-react";
 import AboutPhotoSlot from "@/components/AboutPhotoSlot";
@@ -8,11 +8,6 @@ import AboutPhotoSlot from "@/components/AboutPhotoSlot";
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -20,7 +15,7 @@ export default function About() {
   });
 
   const smoothScroll = useSpring(scrollYProgress, { stiffness: 100, damping: 20 });
-  const textY = useTransform(smoothScroll, [0, 1], [40, -40]);
+  const textY = useTransform(smoothScroll, [0, 1], prefersReducedMotion ? [0, 0] : [40, -40]);
 
   return (
     <section
@@ -52,10 +47,7 @@ export default function About() {
           </div>
 
           {/* Editorial Content (7 Cols) */}
-          <motion.div
-            style={mounted && !prefersReducedMotion ? { y: textY } : undefined}
-            className="lg:col-span-7 space-y-10"
-          >
+          <motion.div style={{ y: textY }} className="lg:col-span-7 space-y-10">
             
             {/* Main Narrative */}
             <div className="space-y-5 p-8 rounded-2xl border border-white/[0.08] bg-black/60 backdrop-blur-md shadow-2xl">

@@ -211,7 +211,7 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xs sm:text-sm text-text-secondary max-w-xl font-sans leading-relaxed font-light"
           >
-            Architecting MindLens (AI Wellbeing Analyzer), MediFlow (Emergency Healthcare Platform), and solving 200+ LeetCode algorithms. Computer Science &amp; Engineering Class of 2028.
+            Architecting CodeMent (AI PR reviewer), high-performance distributed task queues, and daily graph algorithms. Computer Science &amp; Engineering Class of 2026.
           </motion.p>
 
           {/* Magnetic Primary Action Button: ENTER EXPERIENCE → */}
@@ -294,7 +294,7 @@ export default function CinematicIntro({ onComplete }: CinematicIntroProps) {
                   <ShieldCheck size={12} className="text-emerald-400" />
                   HARSHIT SAXENA
                 </span>
-                <span className="text-white/40">CS &middot; CLASS OF &apos;28</span>
+                <span className="text-white/40">CS &middot; CLASS OF &apos;26</span>
               </div>
             </div>
           </div>

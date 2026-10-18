@@ -7,7 +7,6 @@ import { Search, CornerDownLeft, Command, FileText, Code, Mail, Terminal, User, 
 interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpenConsole?: () => void;
 }
 
 interface CommandItem {
@@ -19,7 +18,7 @@ interface CommandItem {
   action: () => void;
 }
 
-export default function CommandPalette({ isOpen, onClose, onOpenConsole }: CommandPaletteProps) {
+export default function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -83,19 +82,6 @@ export default function CommandPalette({ isOpen, onClose, onOpenConsole }: Comma
   }, [isOpen]);
 
   const commands: CommandItem[] = [
-    {
-      id: "console",
-      label: "Open HarshitOS Interactive Console",
-      category: "Navigation",
-      icon: Terminal,
-      shortcut: "⌘ O",
-      action: () => {
-        onClose();
-        if (onOpenConsole) {
-          setTimeout(onOpenConsole, 100);
-        }
-      },
-    },
     {
       id: "home",
       label: "Jump to Overview / Hero",

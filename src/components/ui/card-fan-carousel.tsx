@@ -70,27 +70,14 @@ export default function CardFanCarousel({ projects, onSelectProject }: CardFanCa
   const prevVisible = useRef<Set<number>>(new Set());
 
   const totalCards = projects.length;
-  const needsPagination = totalCards > 1;
-  const [centerIndex, setCenterIndex] = useState(totalCards >> 1);
+  const needsPagination = totalCards > MAX_VISIBLE;
+  const [centerIndex, setCenterIndex] = useState(needsPagination ? HALF : totalCards >> 1);
 
   const getVisibleMap = useCallback(
     (center: number) => {
       const map = new Map<number, number>();
-      if (totalCards <= MAX_VISIBLE) {
-        const half = totalCards >> 1;
-        for (let i = 0; i < totalCards; i++) {
-          // Determine slot position relative to center card
-          const rel = ((i - center + totalCards) % totalCards);
-          let slot: number;
-          if (rel === 0) {
-            slot = half; // Center slot
-          } else if (rel <= half) {
-            slot = half + rel; // Right slots
-          } else {
-            slot = half - (totalCards - rel); // Left slots
-          }
-          map.set(i, slot);
-        }
+      if (!needsPagination) {
+        projects.forEach((_, i) => map.set(i, i));
         return map;
       }
       for (let slot = 0; slot < MAX_VISIBLE; slot++) {
@@ -98,19 +85,19 @@ export default function CardFanCarousel({ projects, onSelectProject }: CardFanCa
       }
       return map;
     },
-    [totalCards]
+    [totalCards, needsPagination, projects]
   );
 
   const cycle = useCallback(
     (direction: "left" | "right") => {
-      if (isAnimating.current || totalCards <= 1) return;
+      if (isAnimating.current || !needsPagination) return;
       isAnimating.current = true;
       directionRef.current = direction;
       setCenterIndex((prev) =>
         direction === "right" ? (prev + 1) % totalCards : (prev - 1 + totalCards) % totalCards
       );
     },
-    [totalCards]
+    [totalCards, needsPagination]
   );
 
   useEffect(() => {
@@ -454,47 +441,33 @@ export default function CardFanCarousel({ projects, onSelectProject }: CardFanCa
       </div>
 
       {needsPagination && (
-        <div className="flex flex-col items-center gap-3 mt-8 z-30 font-mono">
-          <div className="flex items-center justify-center gap-4">
-            <button
-              className={`${ARROW_CLASSES} w-10 h-10 md:w-11 md:h-11`}
-              onClick={() => cycle("left")}
-              aria-label="Previous Project"
-            >
-              {chevron("left")}
-            </button>
-            <div className="flex items-center gap-2.5 bg-black/60 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
-              {projects.map((p, i) => (
-                <button
-                  key={p.id}
-                  onClick={() => {
-                    if (isAnimating.current || i === centerIndex) return;
-                    isAnimating.current = true;
-                    directionRef.current = i > centerIndex ? "right" : "left";
-                    setCenterIndex(i);
-                  }}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    i === centerIndex
-                      ? "bg-emerald-400 scale-[1.3] shadow-[0_0_10px_rgba(16,185,129,0.8)]"
-                      : "bg-white/30 hover:bg-white/60"
-                  }`}
-                  aria-label={`Jump to project ${p.title}`}
-                />
-              ))}
-            </div>
-            <button
-              className={`${ARROW_CLASSES} w-10 h-10 md:w-11 md:h-11`}
-              onClick={() => cycle("right")}
-              aria-label="Next Project"
-            >
-              {chevron("right")}
-            </button>
+        <div className="flex items-center justify-center gap-4 mt-8 z-30">
+          <button
+            className={`${ARROW_CLASSES} w-10 h-10 md:w-12 md:h-12`}
+            onClick={() => cycle("left")}
+            aria-label="Previous Project"
+          >
+            {chevron("left")}
+          </button>
+          <div className="flex items-center gap-2">
+            {projects.map((_, i) => (
+              <span
+                key={i}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  i === centerIndex
+                    ? "bg-emerald-400 scale-[1.4] shadow-[0_0_8px_rgba(16,185,129,0.8)]"
+                    : "bg-white/20"
+                }`}
+              />
+            ))}
           </div>
-          <div className="text-xs text-white/50 flex items-center gap-2">
-            <span className="text-emerald-400 font-bold">0{centerIndex + 1} / 0{totalCards}</span>
-            <span className="text-white/20">&middot;</span>
-            <span className="text-white/80 font-semibold">{projects[centerIndex]?.title}</span>
-          </div>
+          <button
+            className={`${ARROW_CLASSES} w-10 h-10 md:w-12 md:h-12`}
+            onClick={() => cycle("right")}
+            aria-label="Next Project"
+          >
+            {chevron("right")}
+          </button>
         </div>
       )}
     </section>

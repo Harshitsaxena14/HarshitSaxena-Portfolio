@@ -31,10 +31,11 @@ const TECH_CATEGORIES: TechCategory[] = [
     icon: Terminal,
     accentColor: "#38BDF8", // Cyan
     skills: [
-      { name: "C++", tag: "SYSTEMS", detail: "200+ LeetCode problems solved, STL algorithms, memory management & graphs" },
-      { name: "Python", tag: "CORE", detail: "MindLens NLP sentiment engine, MediFlow web platform, TensorFlow pipelines" },
-      { name: "TypeScript", tag: "TYPED", detail: "Strict typing, generics, HarshitOS portfolio components, zero runtime type errors" },
-      { name: "JavaScript", tag: "ES6+", detail: "Modern ES6+, asynchronous promises, DOM manipulation & V8 optimization" },
+      { name: "C++", tag: "SYSTEMS", detail: "STL, Memory Management, Graph Algorithms" },
+      { name: "Python", tag: "CORE", detail: "FastAPI, PyTorch, Async IO, Data Science" },
+      { name: "TypeScript", tag: "TYPED", detail: "Strict Typing, Generics, Node/Browser" },
+      { name: "JavaScript", tag: "ES6+", detail: "V8 Engine, Asynchronous Patterns, DOM" },
+      { name: "Go", tag: "CONCURRENCY", detail: "Goroutines, Channels, CLI Tools, etcd" },
     ],
   },
   {
@@ -42,15 +43,15 @@ const TECH_CATEGORIES: TechCategory[] = [
     number: "02",
     title: "FRAMEWORKS & RUNTIME",
     subtitle: "APPLICATION ARCHITECTURE",
-    description: "Modern server-rendered web frameworks, reactive state management, and high-throughput application backends.",
+    description: "Modern server-rendered web frameworks, reactive state management, and high-throughput microservices.",
     icon: Layers,
     accentColor: "#A855F7", // Purple
     skills: [
-      { name: "React 18", tag: "UI", detail: "Concurrent Mode, custom hooks, virtual DOM, and component composition" },
-      { name: "Next.js 14", tag: "FULLSTACK", detail: "App Router, SSR, Server Components, and HarshitOS editorial architecture" },
-      { name: "FastAPI", tag: "BACKEND", detail: "High-throughput asynchronous Python microservices with Pydantic validation" },
-      { name: "Node.js", tag: "RUNTIME", detail: "Event loop execution, server-side APIs, and npm dependency workflows" },
-      { name: "Tailwind CSS & Motion", tag: "STYLING", detail: "Utility design tokens, Framer Motion spring physics & 60fps animations" },
+      { name: "React 18", tag: "UI", detail: "Concurrent Mode, Custom Hooks, Virtual DOM" },
+      { name: "Next.js 14", tag: "FULLSTACK", detail: "App Router, SSR, Server Actions, Dynamic Routing" },
+      { name: "FastAPI", tag: "BACKEND", detail: "Async Python, Pydantic, OpenAPI Specs" },
+      { name: "Node.js", tag: "RUNTIME", detail: "Event Loop, Stream Processing, REST APIs" },
+      { name: "Tailwind CSS & Motion", tag: "STYLING", detail: "Utility Design, Framer Motion Physics, Layouts" },
     ],
   },
   {
@@ -58,14 +59,16 @@ const TECH_CATEGORIES: TechCategory[] = [
     number: "03",
     title: "SYSTEMS & DATA",
     subtitle: "DISTRIBUTED STORAGE & INFRA",
-    description: "Reliable database schemas, emergency query indexing, and containerized deployment workflows.",
+    description: "Reliable database systems, in-memory caching, binary CRDTs, and container orchestration.",
     icon: Database,
     accentColor: "#F59E0B", // Amber
     skills: [
-      { name: "PostgreSQL", tag: "RELATIONAL", detail: "MediFlow medicine inventory relational schema, indexing, and emergency lookups" },
-      { name: "REST APIs", tag: "API DESIGN", detail: "RESTful architecture, status codes, query pagination & schema validation" },
-      { name: "Docker", tag: "CONTAINERS", detail: "Containerized application environments, Dockerfiles, and image isolation" },
-      { name: "Linux & Git", tag: "DEVOPS", detail: "Bash command line, Git branching workflows, GitHub version control & CI/CD" },
+      { name: "PostgreSQL", tag: "RELATIONAL", detail: "ACID Transactions, Indexing, Complex Queries" },
+      { name: "Redis", tag: "CACHE", detail: "Pub/Sub Queues, Key-Value Caching, Memory Store" },
+      { name: "WebSockets & Yjs", tag: "REAL-TIME", detail: "Binary CRDT Sync, Bi-directional Streaming" },
+      { name: "REST & GraphQL", tag: "API DESIGN", detail: "Schema Validation, Rate Limiting, Query Parsing" },
+      { name: "Docker", tag: "CONTAINERS", detail: "Multi-stage Builds, Compose, Isolation" },
+      { name: "Linux & Git", tag: "DEVOPS", detail: "Bash Scripting, CI/CD Workflows, Version Control" },
     ],
   },
   {
@@ -73,15 +76,16 @@ const TECH_CATEGORIES: TechCategory[] = [
     number: "04",
     title: "AI / ML & TOOLING",
     subtitle: "INTELLIGENT PIPELINES & UTILS",
-    description: "Machine learning model training, sentiment analysis pipelines, and deployed interactive intelligence dashboards.",
+    description: "Machine learning model deployment, automated LLM review tools, and visual pipeline DAG builders.",
     icon: Cpu,
     accentColor: "#10B981", // Emerald
     skills: [
-      { name: "TensorFlow", tag: "DEEP LEARNING", detail: "MindLens sentiment classification model & Fashion-MNIST CNN (86% accuracy)" },
-      { name: "Infosys Springboard AI", tag: "CERTIFIED", detail: "Professional certification in Artificial Intelligence & Deep Learning principles" },
-      { name: "NLP Pipelines", tag: "INTELLIGENCE", detail: "Sentiment analysis, mood scoring, and text preprocessing for student wellbeing" },
-      { name: "Streamlit", tag: "DEPLOYMENT", detail: "Interactive cloud web application deployment for MindLens platform" },
-      { name: "Scikit-Learn", tag: "ML CORE", detail: "Data preprocessing, classification algorithms, and feature evaluation metrics" },
+      { name: "Gemini API", tag: "LLM INTEGRATION", detail: "Structured Prompting, Streaming Tokens, Code Analysis" },
+      { name: "PyTorch & TensorFlow", tag: "DEEP LEARNING", detail: "Neural Net Inference, Model Pipeline Training" },
+      { name: "MLflow", tag: "MLOPS", detail: "Experiment Tracking, Artifact Registry, Run Metrics" },
+      { name: "Scikit-Learn", tag: "ML CORE", detail: "Regression, Clustering, Classification Pipeline" },
+      { name: "OpenCV", tag: "VISION", detail: "Image Processing, Feature Extraction, Filtering" },
+      { name: "React Flow", tag: "DAG UI", detail: "Visual Pipeline Graphs, Node Execution State" },
     ],
   },
 ];
@@ -117,7 +121,7 @@ function TechnicalCategoryPanel({
       ref={panelRef}
       initial={{ opacity: 0, y: 30, scale: 0.98 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-60px" }}
+      viewport={{ once: false, margin: "-80px" }}
       transition={{ duration: 0.6, delay: index * 0.1, ease: [0.21, 0.47, 0.32, 0.98] }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsPanelHovered(true)}
@@ -179,16 +183,13 @@ function TechnicalCategoryPanel({
           return (
             <div
               key={skill.name}
-              tabIndex={0}
               onMouseEnter={() => setHoveredTech(skill.name)}
               onMouseLeave={() => setHoveredTech(null)}
-              onFocus={() => setHoveredTech(skill.name)}
-              onBlur={() => setHoveredTech(null)}
               style={{
                 transform: isItemHovered && !prefersReducedMotion ? "translateY(-2px) scale(1.02)" : "scale(1)",
                 transition: "all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1)",
               }}
-              className={`relative cursor-pointer rounded-xl border px-3.5 py-2 flex items-center gap-2 font-mono text-xs select-none transition-all duration-200 outline-none focus-visible:ring-1 focus-visible:ring-emerald-400 ${
+              className={`relative cursor-pointer rounded-xl border px-3.5 py-2 flex items-center gap-2 font-mono text-xs select-none transition-all duration-200 ${
                 isItemHovered
                   ? "bg-white/[0.12] border-white/40 text-white shadow-lg z-20"
                   : isAnyItemHovered
@@ -196,7 +197,7 @@ function TechnicalCategoryPanel({
                   : "bg-black/50 border-white/[0.08] text-white/80 hover:border-white/20"
               }`}
             >
-              {/* Glowing Indicator Dot */}
+              {/* Glowing Emerald Dot on Hover */}
               <span
                 className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                   isItemHovered ? "bg-emerald-400 scale-125 shadow-[0_0_8px_rgba(52,211,153,0.8)]" : "bg-white/20"
@@ -212,21 +213,21 @@ function TechnicalCategoryPanel({
       </div>
 
       {/* Bottom Sub-Detail Card on Skill Hover */}
-      <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between font-mono text-[11px] text-white/40 min-h-8">
+      <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between font-mono text-[11px] text-white/40 h-7">
         {hoveredTech ? (
           <motion.div
             initial={{ opacity: 0, x: -6 }}
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2 text-emerald-300 font-medium"
           >
-            <Sparkles size={12} className="text-emerald-400 shrink-0" />
-            <span className="line-clamp-1">
+            <Sparkles size={12} className="text-emerald-400" />
+            <span>
               {category.skills.find((s) => s.name === hoveredTech)?.detail}
             </span>
           </motion.div>
         ) : (
           <div className="flex items-center justify-between w-full text-white/30 text-[10px] uppercase tracking-wider">
-            <span>HOVER OR FOCUS TECH FOR APPLIED CONTEXT</span>
+            <span>HOVER TECH TO INSPECT SPECIALIZED CAPABILITIES</span>
             <ArrowUpRight size={12} />
           </div>
         )}
@@ -238,13 +239,6 @@ function TechnicalCategoryPanel({
 // ─── Main Technical Arsenal Component ────────────────────────────────────────
 
 export default function TechStack() {
-  const [activeFilter, setActiveFilter] = useState<string>("all");
-
-  const filteredCategories =
-    activeFilter === "all"
-      ? TECH_CATEGORIES
-      : TECH_CATEGORIES.filter((c) => c.id === activeFilter);
-
   return (
     <section
       id="skills"
@@ -254,61 +248,38 @@ export default function TechStack() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-cyan-500/5 blur-[140px] pointer-events-none rounded-full" />
       <div className="absolute bottom-10 right-10 w-[500px] h-[400px] bg-emerald-500/5 blur-[120px] pointer-events-none rounded-full" />
 
-      <div className="max-w-[1240px] mx-auto px-6 relative z-10 space-y-12">
+      <div className="max-w-[1240px] mx-auto px-6 relative z-10 space-y-16">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2 border-b border-white/[0.08]">
-          <div className="space-y-3 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="font-mono text-xs text-emerald-300 uppercase tracking-widest">
-                // 06. TECH STACK &middot; TECHNICAL ARSENAL
-              </span>
-            </div>
-
-            <h2
-              id="skills-heading"
-              className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tighter uppercase leading-none"
-            >
-              What I Build With.
-            </h2>
-
-            <p className="text-sm sm:text-base text-white/60 font-sans leading-relaxed pt-1 max-w-2xl font-light">
-              A practical engineering stack built around algorithmic problem solving, high-throughput systems, real-time application architecture, and machine learning pipelines.
-            </p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, margin: "-80px" }}
+          transition={{ duration: 0.6 }}
+          className="space-y-3 max-w-3xl"
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-mono text-xs text-emerald-300 uppercase tracking-widest">
+              // 06. TECH STACK &middot; TECHNICAL ARSENAL
+            </span>
           </div>
 
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-white/[0.03] border border-white/10 font-mono text-xs self-start md:self-auto">
-            <button
-              onClick={() => setActiveFilter("all")}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                activeFilter === "all"
-                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold"
-                  : "text-white/50 hover:text-white"
-              }`}
-            >
-              ALL DOMAINS
-            </button>
-            {TECH_CATEGORIES.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setActiveFilter(c.id)}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  activeFilter === c.id
-                    ? "bg-white/15 text-white border border-white/25 font-semibold"
-                    : "text-white/40 hover:text-white"
-                }`}
-              >
-                {c.number} {c.title.split(" ")[0]}
-              </button>
-            ))}
-          </div>
-        </div>
+          <h2
+            id="skills-heading"
+            className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tighter uppercase leading-none"
+          >
+            WHAT I BUILD WITH.
+          </h2>
+
+          <p className="text-sm sm:text-base text-white/60 font-sans leading-relaxed pt-1 max-w-2xl">
+            A practical engineering stack built around memory safety, high-throughput systems, real-time application architecture, and machine learning pipelines.
+          </p>
+        </motion.div>
 
         {/* 2-Column Asymmetric Editorial Matrix */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-          {filteredCategories.map((category, index) => (
+          {TECH_CATEGORIES.map((category, index) => (
             <TechnicalCategoryPanel key={category.id} category={category} index={index} />
           ))}
         </div>
@@ -317,24 +288,24 @@ export default function TechStack() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.6, delay: 0.4 }}
           className="rounded-xl border border-white/[0.06] bg-black/40 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-white/50"
         >
           <div className="flex items-center gap-3">
             <span className="px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold tracking-wider uppercase">
               PRODUCTION STACK
             </span>
-            <span>VERIFIED CAPABILITIES ACROSS 4 CORE SYSTEMS DOMAINS</span>
+            <span>24 VERIFIED TECHNOLOGIES ACROSS 4 CORE DOMAINS</span>
           </div>
           <div className="flex items-center gap-6 text-[11px] text-white/40">
-            <span>C++ &amp; PYTHON</span>
+            <span>LANGUAGES</span>
             <span>&middot;</span>
-            <span>NEXT.JS 14</span>
+            <span>FRAMEWORKS</span>
             <span>&middot;</span>
-            <span>POSTGRESQL</span>
+            <span>SYSTEMS</span>
             <span>&middot;</span>
-            <span>TENSORFLOW</span>
+            <span>AI / ML</span>
           </div>
         </motion.div>
 

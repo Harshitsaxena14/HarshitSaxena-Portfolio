@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform, useSpring } from "framer-motion";
 import {
   Github,
@@ -246,9 +246,25 @@ function FloatingSpatialCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
+      initial={
+        prefersReducedMotion
+          ? { opacity: 1 }
+          : {
+              opacity: 0,
+              scale: 0.9,
+              y: 45,
+            }
+      }
+      whileInView={
+        prefersReducedMotion
+          ? { opacity: 1 }
+          : {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+            }
+      }
+      viewport={{ once: true, margin: "-80px" }}
       transition={{
         duration: 0.75,
         delay: index * 0.1,
@@ -378,8 +394,6 @@ function FloatingSpatialCard({
 export default function ProjectCaseStudy() {
   const prefersReducedMotion = useReducedMotion();
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [viewMode, setViewMode] = useState<"deck" | "grid">("deck");
-  const [modalTab, setModalTab] = useState<"overview" | "features" | "challenges">("overview");
   const sectionRef = useRef<HTMLElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -392,7 +406,6 @@ export default function ProjectCaseStudy() {
 
   const handleSelectProject = useCallback((project: Project) => {
     setSelectedProject(project);
-    setModalTab("overview");
   }, []);
 
   const handleCloseDetail = useCallback(() => {
@@ -415,22 +428,6 @@ export default function ProjectCaseStudy() {
     setSelectedProject(PROJECTS[prevIndex]);
   }, [selectedProject, total]);
 
-  // Keyboard navigation inside modal (ESC to close, Left/Right arrows to cycle)
-  useEffect(() => {
-    if (!selectedProject) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setSelectedProject(null);
-      } else if (e.key === "ArrowRight") {
-        handleNextProject();
-      } else if (e.key === "ArrowLeft") {
-        handlePrevProject();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [selectedProject, handleNextProject, handlePrevProject]);
-
   return (
     <section
       ref={sectionRef}
@@ -438,70 +435,30 @@ export default function ProjectCaseStudy() {
       className="relative w-full pt-16 pb-24 md:pt-24 md:pb-36 bg-[#030305] border-b border-white/[0.06] overflow-hidden"
     >
       <div className="max-w-[1240px] mx-auto px-4 sm:px-6">
-        {/* Section Header with View Switcher */}
-        <motion.div style={{ y: headerY }} className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 pb-2 border-b border-white/[0.08]">
+        {/* Section Header */}
+        <motion.div style={{ y: headerY }} className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 text-center sm:text-left">
           <div className="space-y-2">
-            <span className="font-mono text-xs text-emerald-400/90 tracking-widest block uppercase mb-1">
-              // 04. PROJECTS &middot; SYSTEMS &amp; ARCHITECTURE
+            <span className="font-mono text-xs text-text-muted tracking-widest block uppercase mb-2">
+              // 04. PROJECTS &middot; SPATIAL CARD FAN FIELD
             </span>
             <h2
               id="projects-heading"
               className="text-3xl sm:text-5xl font-black text-white tracking-tighter uppercase"
             >
-              Engineering Showcase
+              Engineering &amp; Systems Showcase
             </h2>
-            <p className="text-xs sm:text-sm text-white/60 font-sans max-w-xl font-light">
-              Production systems, deployed AI tools, and full-stack software architectures built with measurable engineering craft.
-            </p>
           </div>
 
-          {/* View Switcher: Spatial Fan Deck vs Architecture Bento Grid */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white/[0.03] border border-white/10 self-start sm:self-auto font-mono text-xs shrink-0">
-            <button
-              onClick={() => setViewMode("deck")}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                viewMode === "deck"
-                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold"
-                  : "text-white/50 hover:text-white"
-              }`}
-              aria-pressed={viewMode === "deck"}
-            >
-              <Layers size={14} />
-              <span>SPATIAL DECK</span>
-            </button>
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                viewMode === "grid"
-                  ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-semibold"
-                  : "text-white/50 hover:text-white"
-              }`}
-              aria-pressed={viewMode === "grid"}
-            >
-              <Terminal size={14} />
-              <span>SYSTEM GRID</span>
-            </button>
-          </div>
+          <p className="font-mono text-[11px] text-emerald-400/90 tracking-widest uppercase flex items-center justify-center sm:justify-start gap-2 bg-emerald-950/30 border border-emerald-500/30 px-3 py-1.5 rounded-full shrink-0">
+            <Sparkles size={12} className="animate-spin text-emerald-400" />
+            HOVER &amp; CLICK ANY CARD FOR CASE STUDY
+          </p>
         </motion.div>
 
-        {/* View Mode 1: Spatial Card Fan Carousel */}
-        {viewMode === "deck" ? (
-          <CardFanCarousel projects={PROJECTS} onSelectProject={handleSelectProject} />
-        ) : (
-          /* View Mode 2: System Architecture Bento Grid */
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
-            {PROJECTS.map((project, index) => (
-              <FloatingSpatialCard
-                key={project.id}
-                project={project}
-                index={index}
-                onSelect={handleSelectProject}
-              />
-            ))}
-          </div>
-        )}
+        {/* Spatial Card Fan Carousel Component */}
+        <CardFanCarousel projects={PROJECTS} onSelectProject={handleSelectProject} />
 
-        {/* Case Study Fluid Modal Drawer */}
+        {/* Case Study Spatial Focus Modal */}
         <AnimatePresence>
           {selectedProject && (
             <motion.div
@@ -513,11 +470,11 @@ export default function ProjectCaseStudy() {
               onClick={handleCloseDetail}
             >
               <motion.div
-                initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.95, y: 20 }}
+                initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.94, y: 24 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 20 }}
+                exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 24 }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#09090e] border border-white/10 rounded-2xl p-6 sm:p-10 space-y-7 shadow-2xl relative select-text"
+                className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#09090e] border border-white/10 rounded-2xl p-6 sm:p-10 space-y-8 shadow-2xl relative select-text"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Top Nav inside modal */}
@@ -527,7 +484,7 @@ export default function ProjectCaseStudy() {
                     className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 bg-emerald-950/30 transition-all cursor-pointer"
                   >
                     <ArrowLeft size={14} />
-                    <span>BACK TO PROJECTS</span>
+                    <span>BACK TO PROJECT FIELD</span>
                   </button>
 
                   <div className="flex items-center gap-3">
@@ -576,103 +533,65 @@ export default function ProjectCaseStudy() {
                   </p>
                 </div>
 
-                {/* Modal Navigation Tabs */}
-                <div className="flex items-center gap-2 border-b border-white/[0.08] pb-3 font-mono text-xs">
-                  <button
-                    onClick={() => setModalTab("overview")}
-                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                      modalTab === "overview"
-                        ? "bg-white/10 text-white font-semibold border border-white/20"
-                        : "text-white/40 hover:text-white/80"
-                    }`}
-                  >
-                    01 // PROBLEM &amp; ARCHITECTURE
-                  </button>
-                  <button
-                    onClick={() => setModalTab("features")}
-                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                      modalTab === "features"
-                        ? "bg-white/10 text-white font-semibold border border-white/20"
-                        : "text-white/40 hover:text-white/80"
-                    }`}
-                  >
-                    02 // KEY FEATURES ({selectedProject.features.length})
-                  </button>
-                  <button
-                    onClick={() => setModalTab("challenges")}
-                    className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                      modalTab === "challenges"
-                        ? "bg-white/10 text-white font-semibold border border-white/20"
-                        : "text-white/40 hover:text-white/80"
-                    }`}
-                  >
-                    03 // CHALLENGES &amp; LESSONS
-                  </button>
+                {/* Grid Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                  <div className="p-6 rounded-xl border border-white/[0.08] bg-black/50 space-y-2">
+                    <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-semibold uppercase tracking-wider">
+                      <Terminal size={14} />
+                      <span>01 // THE PROBLEM</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-text-secondary leading-relaxed font-sans font-normal">
+                      {selectedProject.problem}
+                    </p>
+                  </div>
+
+                  <div className="p-6 rounded-xl border border-white/[0.08] bg-black/50 space-y-2">
+                    <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider">
+                      <Layers size={14} />
+                      <span>02 // SYSTEM ARCHITECTURE</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-text-secondary leading-relaxed font-sans font-normal">
+                      {selectedProject.architecture}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Tab Content Display */}
-                {modalTab === "overview" && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-1">
-                    <div className="p-6 rounded-xl border border-white/[0.08] bg-black/50 space-y-3">
-                      <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-semibold uppercase tracking-wider">
-                        <Terminal size={14} />
-                        <span>THE PROBLEM STATEMENT</span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-text-secondary leading-relaxed font-sans font-normal">
-                        {selectedProject.problem}
-                      </p>
-                    </div>
-
-                    <div className="p-6 rounded-xl border border-white/[0.08] bg-black/50 space-y-3">
-                      <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider">
-                        <Layers size={14} />
-                        <span>SYSTEM ARCHITECTURE</span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-text-secondary leading-relaxed font-sans font-normal">
-                        {selectedProject.architecture}
-                      </p>
-                    </div>
+                {/* Features List */}
+                <div className="p-6 rounded-xl border border-white/[0.08] bg-black/50 space-y-4">
+                  <div className="flex items-center gap-2 text-purple-400 font-mono text-xs font-semibold uppercase tracking-wider">
+                    <Cpu size={14} />
+                    <span>03 // KEY ENGINEERING FEATURES</span>
                   </div>
-                )}
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {selectedProject.features.map((feat, i) => (
+                      <li key={i} className="flex items-start gap-2 text-xs text-text-secondary font-sans">
+                        <CheckCircle2 size={14} className="text-emerald-400 shrink-0 mt-0.5" />
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-                {modalTab === "features" && (
-                  <div className="p-6 rounded-xl border border-white/[0.08] bg-black/50 space-y-4">
-                    <div className="flex items-center gap-2 text-purple-400 font-mono text-xs font-semibold uppercase tracking-wider">
-                      <Cpu size={14} />
-                      <span>VERIFIED ENGINEERING IMPLEMENTATIONS</span>
-                    </div>
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {selectedProject.features.map((feat, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-text-secondary font-sans">
-                          <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
-                          <span>{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
+                {/* Lessons & Challenges */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-5 rounded-xl border border-white/[0.08] bg-black/50 space-y-2">
+                    <span className="font-mono text-xs font-semibold text-amber-400 uppercase tracking-wider block">
+                      TECHNICAL CHALLENGES
+                    </span>
+                    <p className="text-xs text-text-secondary leading-relaxed font-sans">
+                      {selectedProject.challenges}
+                    </p>
                   </div>
-                )}
 
-                {modalTab === "challenges" && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="p-5 rounded-xl border border-white/[0.08] bg-black/50 space-y-2">
-                      <span className="font-mono text-xs font-semibold text-amber-400 uppercase tracking-wider block">
-                        TECHNICAL CHALLENGES
-                      </span>
-                      <p className="text-xs sm:text-sm text-text-secondary leading-relaxed font-sans">
-                        {selectedProject.challenges}
-                      </p>
-                    </div>
-
-                    <div className="p-5 rounded-xl border border-white/[0.08] bg-black/50 space-y-2">
-                      <span className="font-mono text-xs font-semibold text-emerald-400 uppercase tracking-wider block">
-                        KEY LESSONS LEARNED
-                      </span>
-                      <p className="text-xs sm:text-sm text-text-secondary leading-relaxed font-sans">
-                        {selectedProject.lessons}
-                      </p>
-                    </div>
+                  <div className="p-5 rounded-xl border border-white/[0.08] bg-black/50 space-y-2">
+                    <span className="font-mono text-xs font-semibold text-emerald-400 uppercase tracking-wider block">
+                      KEY LESSONS LEARNED
+                    </span>
+                    <p className="text-xs text-text-secondary leading-relaxed font-sans">
+                      {selectedProject.lessons}
+                    </p>
                   </div>
-                )}
+                </div>
 
                 {/* Tech Stack & Links */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-white/[0.08]">
@@ -687,13 +606,13 @@ export default function ProjectCaseStudy() {
                     ))}
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0 font-mono text-xs">
+                  <div className="flex items-center gap-3 shrink-0">
                     {selectedProject.githubUrl && (
                       <a
                         href={selectedProject.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-white bg-white/10 hover:bg-white/20 transition-all"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-medium text-white bg-white/10 hover:bg-white/20 transition-all"
                       >
                         <Github size={14} />
                         <span>SOURCE CODE</span>
@@ -709,5 +628,4 @@ export default function ProjectCaseStudy() {
     </section>
   );
 }
-
 
