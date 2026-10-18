@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
 import { ArrowDown, Code2, Terminal, Cpu, Sparkles } from "lucide-react";
 import { UiverseButton } from "@/components/ui/UiverseButton";
@@ -9,6 +9,11 @@ import InteractivePortraitCard from "@/components/InteractivePortraitCard";
 export default function Hero({ isBooting = false }: { isBooting?: boolean }) {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -18,10 +23,10 @@ export default function Hero({ isBooting = false }: { isBooting?: boolean }) {
   const smoothScroll = useSpring(scrollYProgress, { stiffness: 100, damping: 20, restDelta: 0.001 });
 
   // Continuous Spatial Camera Transforms on Scroll into About
-  const heroScale = useTransform(smoothScroll, [0, 0.5, 1], prefersReducedMotion ? [1, 1, 1] : [1, 0.88, 0.76]);
-  const heroY = useTransform(smoothScroll, [0, 0.5, 1], prefersReducedMotion ? [0, 0, 0] : [0, -80, -180]);
-  const heroRotateX = useTransform(smoothScroll, [0, 0.6, 1], prefersReducedMotion ? [0, 0, 0] : [0, 8, 18]);
-  const heroTranslateZ = useTransform(smoothScroll, [0, 0.6, 1], prefersReducedMotion ? [0, 0, 0] : [0, -160, -320]);
+  const heroScale = useTransform(smoothScroll, [0, 0.5, 1], [1, 0.88, 0.76]);
+  const heroY = useTransform(smoothScroll, [0, 0.5, 1], [0, -80, -180]);
+  const heroRotateX = useTransform(smoothScroll, [0, 0.6, 1], [0, 8, 18]);
+  const heroTranslateZ = useTransform(smoothScroll, [0, 0.6, 1], [0, -160, -320]);
   const heroOpacity = useTransform(smoothScroll, [0, 0.55, 0.95], [1, 0.5, 0]);
 
   return (
@@ -38,14 +43,18 @@ export default function Hero({ isBooting = false }: { isBooting?: boolean }) {
       {/* Main 2-Column Desktop Grid / Stacked Mobile Composition */}
       <div className="max-w-[1240px] mx-auto px-6 w-full relative z-10 my-auto">
         <motion.div
-          style={{
-            scale: heroScale,
-            y: heroY,
-            rotateX: heroRotateX,
-            translateZ: heroTranslateZ,
-            opacity: heroOpacity,
-            transformStyle: "preserve-3d",
-          }}
+          style={
+            mounted && !prefersReducedMotion
+              ? {
+                  scale: heroScale,
+                  y: heroY,
+                  rotateX: heroRotateX,
+                  translateZ: heroTranslateZ,
+                  opacity: heroOpacity,
+                  transformStyle: "preserve-3d",
+                }
+              : undefined
+          }
           className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center origin-top-left py-4"
         >
           {/* LEFT COLUMN: Editorial Identity */}

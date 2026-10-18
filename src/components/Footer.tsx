@@ -12,7 +12,7 @@ export default function Footer() {
       className="w-full border-t border-border-subtle bg-black"
     >
       <motion.div
-        initial={{ opacity: prefersReducedMotion ? 1 : 0 }}
+        initial={false}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}

@@ -19,6 +19,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 import CommandPalette from "./CommandPalette";
+import HarshitOSConsole from "./HarshitOSConsole";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -169,6 +170,7 @@ function DockNavItemButton({
 
 export default function Navbar({ isBooting = false }: { isBooting?: boolean }) {
   const [isPaletteOpen, setIsPaletteOpen]   = useState(false);
+  const [isConsoleOpen, setIsConsoleOpen]   = useState(false);
   const [scrolled, setScrolled]             = useState(false);
   const [activeSection, setActiveSection]   = useState<string>("home");
   const prefersReducedMotion                = useReducedMotion();
@@ -355,26 +357,25 @@ export default function Navbar({ isBooting = false }: { isBooting?: boolean }) {
             }}
           />
 
-          {/* ── Left: ◉ HarshitOS brand ─────────────────────────────────── */}
-          <a
-            href="#"
-            onClick={(e) => { e.preventDefault(); handleNavClick("#"); }}
-            className="flex items-center gap-1.5 pl-1.5 pr-3 mr-1 border-r border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-1 focus-visible:ring-offset-transparent rounded-sm relative z-10"
-            aria-label="HarshitOS — return to top"
+          {/* ── Left: ◉ HarshitOS brand & interactive console trigger ────── */}
+          <button
+            onClick={() => setIsConsoleOpen(true)}
+            className="flex items-center gap-1.5 pl-1.5 pr-3 mr-1 border-r border-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-1 focus-visible:ring-offset-transparent rounded-sm relative z-10 cursor-pointer group"
+            aria-label="Open HarshitOS interactive developer console"
           >
             <span
-              className="text-[13px] text-white/40 leading-none select-none"
+              className="text-[13px] text-emerald-400 leading-none select-none group-hover:scale-125 transition-transform"
               aria-hidden="true"
             >
               ◉
             </span>
             <span
-              className="text-[12px] font-semibold text-white/80 tracking-tight leading-none hover:text-white transition-colors"
+              className="text-[12px] font-semibold text-white/80 tracking-tight leading-none group-hover:text-emerald-300 transition-colors"
               style={{ fontFamily: "var(--font-jetbrains)" }}
             >
               HarshitOS
             </span>
-          </a>
+          </button>
 
           {/* ── Center: Nav items ────────────────────────────────────────── */}
           <div
@@ -419,7 +420,14 @@ export default function Navbar({ isBooting = false }: { isBooting?: boolean }) {
       </motion.header>
 
       {/* ── Command Palette ──────────────────────────────────────────────── */}
-      <CommandPalette isOpen={isPaletteOpen} onClose={handleClosePalette} />
+      <CommandPalette
+        isOpen={isPaletteOpen}
+        onClose={handleClosePalette}
+        onOpenConsole={() => setIsConsoleOpen(true)}
+      />
+
+      {/* ── HarshitOS Interactive Console / Workspace Drawer ──────────────── */}
+      <HarshitOSConsole isOpen={isConsoleOpen} onClose={() => setIsConsoleOpen(false)} />
     </>
   );
 }
