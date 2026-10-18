@@ -47,7 +47,11 @@ export default function About() {
           </div>
 
           {/* Editorial Content (7 Cols) */}
-          <motion.div style={{ y: textY }} className="lg:col-span-7 space-y-10">
+          <motion.div
+            style={{ y: textY }}
+            className="lg:col-span-7 space-y-10"
+            suppressHydrationWarning
+          >
             
             {/* Main Narrative */}
             <div className="space-y-5 p-8 rounded-2xl border border-white/[0.08] bg-black/60 backdrop-blur-md shadow-2xl">

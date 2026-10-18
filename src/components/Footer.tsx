@@ -16,6 +16,7 @@ export default function Footer() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
+        suppressHydrationWarning
         className="max-w-[1080px] mx-auto px-6 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
       >
         {/* Left: Identity */}
