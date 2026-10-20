@@ -1,29 +1,25 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   motion,
   useScroll,
   useTransform,
   useSpring,
   useReducedMotion,
+  useMotionValueEvent,
 } from "framer-motion";
 import {
   Terminal,
   Cpu,
-  Activity,
-  Zap,
-  ShieldCheck,
   Rocket,
   CheckCircle2,
-  Calendar,
   Sparkles,
   ChevronRight,
-  ExternalLink,
   LucideIcon,
 } from "lucide-react";
 
-// â”€â”€â”€ Milestone Data Model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Milestone Data Model ──────────────────────────────────────────────────────
 
 export interface JourneyMilestone {
   id: string;
@@ -31,7 +27,7 @@ export interface JourneyMilestone {
   domain: string;
   title: string;
   subtitle: string;
-  status: "Completed" | "Active" | "Horizon";
+  status: "Completed" | "Active";
   statusColor: string;
   narrative: string;
   highlights: string[];
@@ -48,147 +44,82 @@ export const JOURNEY_MILESTONES: JourneyMilestone[] = [
   {
     id: "milestone-2024",
     period: "2024",
-    domain: "FOUNDATIONS & ALGORITHMIC RIGOR",
-    title: "Academic Onboarding & Algorithmic Foundations",
-    subtitle: "Amity University Madhya Pradesh Â· B.Tech CSE (CGPA: 8.12)",
+    domain: "ACADEMIC FOUNDATIONS",
+    title: "Starting My Computer Science Journey",
+    subtitle: "Amity University Madhya Pradesh · B.Tech CSE (CGPA: 8.12)",
     status: "Completed",
     statusColor: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
     narrative:
-      "Began Computer Science degree, establishing core algorithmic and C++ foundations with dedicated competitive programming. Mastered trees, graphs, heaps, dynamic programming patterns, and memory management with 200+ LeetCode problems solved.",
+      "Started my B.Tech in Computer Science and Engineering at Amity University Madhya Pradesh. Began building my programming fundamentals, learning C++, and developing an understanding of how software works.",
     highlights: [
-      "Maintained 8.12 CGPA in Computer Science & Engineering curriculum",
-      "Solved 200+ LeetCode problems establishing continuous problem-solving consistency",
-      "Mastered tree traversals, graph algorithms, and dynamic programming in C++",
+      "Enrolled in B.Tech Computer Science and Engineering at Amity University MP",
+      "Built core programming and problem-solving fundamentals in C++",
+      "Started exploring foundational data structures and algorithmic concepts",
     ],
-    techStack: ["C++", "Data Structures", "Algorithms", "Git", "Linux"],
+    techStack: ["C++", "Programming Fundamentals", "Data Structures", "Git"],
     icon: Terminal,
     accentColor: "#38bdf8", // Sky Cyan
+    actionLink: {
+      label: "VIEW ACADEMIC CRAFT",
+      href: "#about",
+    },
+  },
+  {
+    id: "milestone-2025",
+    period: "2025",
+    domain: "DSA, AI/ML & TECHNICAL EXPLORATION",
+    title: "Exploring AI and Turning Learning into Practice",
+    subtitle: "Machine Learning, Deep Learning Certifications & Algorithmic Practice",
+    status: "Completed",
+    statusColor: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
+    narrative:
+      "Expanded my interests beyond programming fundamentals into Data Structures and Algorithms, Artificial Intelligence, Machine Learning, and Deep Learning. Began connecting coursework and certifications with practical implementation and software projects.",
+    highlights: [
+      "Maintained consistent DSA and LeetCode problem-solving practice",
+      "Earned Infosys Springboard certifications in AI and Deep Learning",
+      "Experimented with neural networks, computer vision, and applied NLP models",
+      "Developed confidence turning algorithmic concepts into functional software",
+    ],
+    techStack: ["C++", "Python", "TensorFlow", "Deep Learning", "LeetCode"],
+    icon: Cpu,
+    accentColor: "#a855f7", // Amethyst Purple
     actionLink: {
       label: "VIEW DSA ANALYTICS",
       href: "#leetcode",
     },
   },
   {
-    id: "milestone-early-2025",
-    period: "Early 2025",
-    domain: "INTELLIGENCE & COMPUTER VISION",
-    title: "Infosys Springboard AI Certifications & Neural Networks",
-    subtitle: "Deep Learning & Computer Vision Foundations",
-    status: "Completed",
-    statusColor: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
-    narrative:
-      "Earned professional certifications in AI & Deep Learning via Infosys Springboard. Applied core theoretical concepts by engineering a multi-layer Convolutional Neural Network (CNN) on Fashion-MNIST with TensorFlow/Keras, achieving 86% test accuracy in 5 epochs.",
-    highlights: [
-      "Completed verified Infosys Springboard AI & Deep Learning certifications",
-      "Engineered multi-layer CNN with convolutional kernels, max-pooling, and Softmax",
-      "Constructed robust tensor normalization pipelines to avoid gradient saturation",
-    ],
-    techStack: ["Python", "TensorFlow", "Keras", "CNN", "NumPy"],
-    icon: Cpu,
-    accentColor: "#a855f7", // Amethyst Purple
-    actionLink: {
-      label: "INSPECT CNN CLASSIFIER",
-      href: "#projects",
-    },
-  },
-  {
-    id: "milestone-mid-2025",
-    period: "Mid 2025",
-    domain: "APPLIED AI & DEPLOYED SYSTEMS",
-    title: "MindLens: AI Student Wellbeing Analyzer",
-    subtitle: "NLP Sentiment Analysis & Live Cloud Deployment",
-    status: "Completed",
-    statusColor: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
-    narrative:
-      "Architected and deployed MindLens, an AI-powered student mental wellbeing platform published on Streamlit Cloud. Integrated NLP models to analyze journal reflections and detect sentiment valence, mood indicators, and potential burnout risks.",
-    highlights: [
-      "Deployed live cloud web app accessible to student test communities",
-      "Implemented real-time sentiment extraction and emotional valence scoring",
-      "Built interactive telemetry dashboards for mood tracking and burnout prevention",
-    ],
-    techStack: ["Python", "TensorFlow", "NLP", "Streamlit", "Pandas"],
-    icon: Activity,
-    accentColor: "#10b981", // Emerald Green
-    actionLink: {
-      label: "VIEW MINDLENS CASE STUDY",
-      href: "#projects",
-    },
-  },
-  {
-    id: "milestone-late-2025",
-    period: "Late 2025",
-    domain: "INTELLIGENT WORKFLOWS & NLP",
-    title: "SAHAYAK: Intelligent Task & Query Assistant",
-    subtitle: "Automated Workflow Support & Natural Language Parsing",
-    status: "Completed",
-    statusColor: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
-    narrative:
-      "Engineered SAHAYAK, an automated technical assistance web application designed to eliminate workflow friction for students and developers. Implemented Natural Language Processing algorithms to parse unstructured technical queries and deliver guided resolution pathways.",
-    highlights: [
-      "Created structured query parser handling ambiguous user prompts",
-      "Automated step-by-step guidance for technical problem-solving workflows",
-      "Engineered modular Python backend with extensible intent classification",
-    ],
-    techStack: ["Python", "NLP", "AI Workflows", "Web UI", "Information Retrieval"],
-    icon: Zap,
-    accentColor: "#06b6d4", // Cyan
-    actionLink: {
-      label: "VIEW SAHAYAK DETAILS",
-      href: "#projects",
-    },
-  },
-  {
-    id: "milestone-2025-present",
-    period: "2025 â€” Present",
-    domain: "HEALTHCARE TECH & EMERGENCY SYSTEMS",
-    title: "MediFlow: High-Availability Healthcare Inventory",
-    subtitle: "Critical Emergency Pharmacy Stock Discovery Platform",
+    id: "milestone-2026",
+    period: "2026",
+    domain: "SOFTWARE ENGINEERING & CAREER GROWTH",
+    title: "Building Real Projects and Preparing for Industry",
+    subtitle: "Full-Stack Architecture, AI Systems & Internship Preparation",
     status: "Active",
     statusColor: "text-amber-400 border-amber-500/30 bg-amber-500/10",
     narrative:
-      "Actively engineering MediFlow, a full-stack medicine inventory platform built to solve urgent stock availability in healthcare. Designed an Emergency Mode module that enables hospital procurement staff and patients to discover nearby pharmacies stocking critical medicines in real time.",
+      "Focused on building more substantial software projects, improving full-stack and AI engineering skills, strengthening my portfolio, and preparing for internship opportunities while continuing my B.Tech.",
     highlights: [
-      "Designed high-availability medicine inventory and replenishment workflows",
-      "Engineered emergency pharmacy matching system for life-critical medicine shortages",
-      "Implemented normalized PostgreSQL schemas optimized for rapid geolocation queries",
+      "Building and improving substantial software and full-stack applications",
+      "Developing practical full-stack, backend, and applied AI engineering experience",
+      "Continuing consistent DSA practice and technical interview preparation",
+      "Refining portfolio, technical communication, and professional presence",
+      "Actively pursuing relevant software engineering internship opportunities",
     ],
-    techStack: ["Python", "PostgreSQL", "Database Schema", "Web APIs", "Healthcare Systems"],
-    icon: ShieldCheck,
-    accentColor: "#f59e0b", // Amber Gold
-    actionLink: {
-      label: "INSPECT MEDIFLOW SPECS",
-      href: "#projects",
-    },
-  },
-  {
-    id: "milestone-horizon-2028",
-    period: "Present â€” 2028",
-    domain: "SYSTEMS CRAFT & HORIZON TERMINAL",
-    title: "HarshitOS & Software Engineering Horizon",
-    subtitle: "Next.js 14, Systems Engineering & Industry Readiness",
-    status: "Horizon",
-    statusColor: "text-cyan-400 border-cyan-500/30 bg-cyan-500/10",
-    narrative:
-      "Architected and shipped HarshitOS, a dark editorial developer portfolio built with Next.js 14 App Router, TypeScript, and live LeetCode GraphQL data fetching. Balancing academic coursework at Amity University (Class of 2028) with intensive open-source building, systems programming in C++ and Go, and preparing for software engineering internships.",
-    highlights: [
-      "Engineered responsive, accessible dark editorial portfolio with zero hydration errors",
-      "Integrated live LeetCode GraphQL statistics with contest and submission heatmaps",
-      "Actively seeking Software Engineering & Machine Learning internship opportunities",
-    ],
-    techStack: ["Next.js 14", "TypeScript", "Tailwind CSS", "Framer Motion", "GraphQL", "Go"],
+    techStack: ["Next.js", "TypeScript", "Python", "Full-Stack AI", "FastAPI"],
     icon: Rocket,
-    accentColor: "#10b981", // Emerald
+    accentColor: "#10b981", // Emerald Green
     actionLink: {
-      label: "EXPLORE TECH STACK",
-      href: "#skills",
+      label: "EXPLORE PROJECTS",
+      href: "#projects",
     },
   },
 ];
 
-// â”€â”€â”€ Main Dribbble-Inspired Developer Journey Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Main Developer Journey Component ───────────────────────────────────────────
 
 export default function JourneyTimeline() {
   const containerRef = useRef<HTMLElement>(null);
+  const streamRef = useRef<HTMLDivElement>(null);
   const [activeMilestoneId, setActiveMilestoneId] = useState<string>(JOURNEY_MILESTONES[0].id);
   const prefersReducedMotion = useReducedMotion();
   const [isMounted, setIsMounted] = useState(false);
@@ -197,19 +128,55 @@ export default function JourneyTimeline() {
     setIsMounted(true);
   }, []);
 
-  // Smooth scroll progression calculation for central luminous spine
+  // Continuous scroll-linked progress calculation for central luminous spine
   const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 30%", "end 80%"],
+    target: streamRef,
+    offset: ["start 65%", "end 50%"],
   });
 
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 80,
-    damping: 20,
+    stiffness: 280,
+    damping: 30,
     restDelta: 0.001,
   });
 
   const spineHeight = useTransform(smoothProgress, [0, 1], ["0%", "100%"]);
+
+  // Bidirectional active milestone tracking tied to scroll position
+  const updateActiveMilestone = useCallback(() => {
+    if (typeof window === "undefined") return;
+    const viewportAnchor = window.innerHeight * 0.45;
+    let closestId = JOURNEY_MILESTONES[0].id;
+    let minDiff = Infinity;
+
+    JOURNEY_MILESTONES.forEach((m) => {
+      const el = document.getElementById(m.id);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const cardCenter = rect.top + rect.height / 2;
+        const diff = Math.abs(cardCenter - viewportAnchor);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestId = m.id;
+        }
+      }
+    });
+
+    setActiveMilestoneId((prev) => (prev !== closestId ? closestId : prev));
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", updateActiveMilestone, { passive: true });
+    updateActiveMilestone();
+
+    return () => {
+      window.removeEventListener("scroll", updateActiveMilestone);
+    };
+  }, [updateActiveMilestone]);
+
+  useMotionValueEvent(scrollYProgress, "change", () => {
+    updateActiveMilestone();
+  });
 
   // Quick navigation hop to specific milestone
   const scrollToMilestone = (id: string) => {
@@ -260,8 +227,8 @@ export default function JourneyTimeline() {
           </h2>
 
           <p className="text-sm sm:text-base text-text-secondary font-sans font-light leading-relaxed">
-            A connected narrative tracing foundational algorithmic rigor, deep learning certifications,
-            applied AI deployments, and scalable software systems craft.
+            A connected narrative tracing academic foundations, AI and deep learning exploration,
+            and ongoing software engineering growth.
           </p>
 
           {/* Quick-Hop Navigation Ribbon */}
@@ -272,7 +239,7 @@ export default function JourneyTimeline() {
                 <button
                   key={m.id}
                   onClick={() => scrollToMilestone(m.id)}
-                  className={`px-3 py-1.5 rounded-lg font-mono text-[11px] transition-all duration-300 border cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-lg font-mono text-[11px] transition-all duration-300 border cursor-pointer ${
                     isActive
                       ? "text-white font-bold shadow-lg"
                       : "text-white/50 hover:text-white/90 border-white/10 bg-white/[0.02]"
@@ -291,21 +258,25 @@ export default function JourneyTimeline() {
           </div>
         </div>
 
-        {/* â”€â”€â”€ Dribbble Material Timeline Stream â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-        <div className="relative">
+        {/* ─── Timeline Stream ─── */}
+        <div ref={streamRef} className="relative">
 
-          {/* Central Connecting Track Line (Desktop center, Mobile left-6) */}
+          {/* Central Connecting Track Spine (Desktop center, Mobile left-6) */}
           <div
-            className="absolute top-8 bottom-8 left-6 md:left-1/2 md:-translate-x-1/2 w-[2px] bg-white/[0.08] pointer-events-none"
+            className="absolute top-8 bottom-8 left-6 md:left-1/2 md:-translate-x-1/2 w-[2px] pointer-events-none z-10"
             aria-hidden="true"
-          />
+          >
+            {/* Background static line track */}
+            <div className="absolute inset-0 w-full bg-white/[0.08]" />
 
-          {/* Scroll-Illuminated Glowing Spine */}
-          <motion.div
-            style={{ height: isMounted && !prefersReducedMotion ? spineHeight : "100%" }}
-            className="absolute top-8 left-6 md:left-1/2 md:-translate-x-1/2 w-[2px] bg-gradient-to-b from-cyan-400 via-purple-500 to-emerald-400 origin-top pointer-events-none shadow-[0_0_15px_rgba(56,189,248,0.7)]"
-            aria-hidden="true"
-          />
+            {/* Scroll-Illuminated Glowing Spine */}
+            <motion.div
+              style={{
+                height: spineHeight,
+              }}
+              className="absolute top-0 left-0 w-full bg-gradient-to-b from-cyan-400 via-purple-500 to-emerald-400 shadow-[0_0_15px_rgba(56,189,248,0.7)]"
+            />
+          </div>
 
           {/* Milestone Cards Stream */}
           <div className="space-y-12 md:space-y-20 relative">
@@ -405,7 +376,7 @@ export default function JourneyTimeline() {
                       {/* Key Deliverables Checklist */}
                       <div className="space-y-2 mb-5 pt-1">
                         <span className="font-mono text-[9px] text-white/40 uppercase tracking-widest block">
-                          // VERIFIED DELIVERABLES
+                          // VERIFIED HIGHLIGHTS
                         </span>
                         <ul className="space-y-1.5 font-sans">
                           {milestone.highlights.map((item, i) => (
@@ -473,7 +444,7 @@ export default function JourneyTimeline() {
                       }`}
                       style={{
                         borderColor: milestone.accentColor,
-                        boxShadow: `0 0 16px ${milestone.accentColor}60`,
+                        boxShadow: isActive ? `0 0 16px ${milestone.accentColor}60` : undefined,
                       }}
                     >
                       <span
@@ -511,11 +482,7 @@ export default function JourneyTimeline() {
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-amber-400" />
-              <span>ACTIVE SYSTEM</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-cyan-400" />
-              <span>HORIZON TARGET</span>
+              <span>ACTIVE FOCUS</span>
             </div>
           </div>
 

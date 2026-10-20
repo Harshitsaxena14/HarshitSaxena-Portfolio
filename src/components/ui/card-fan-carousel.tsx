@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
 import { Github, ExternalLink, Sparkles, ArrowRight } from "lucide-react";
-import { Project } from "@/components/ProjectCaseStudy";
+import { Project } from "@/types/caseStudy";
 
 interface CardFanCarouselProps {
   projects: Project[];
@@ -442,10 +442,25 @@ export default function CardFanCarousel({ projects, onSelectProject }: CardFanCa
                   </div>
 
                   <div className="flex items-center justify-between font-mono text-[11px] pt-1">
-                    <span className="text-emerald-400 group-hover:translate-x-1.5 transition-transform inline-flex items-center gap-1.5 font-bold">
-                      <span>CASE STUDY</span>
-                      <ArrowRight size={12} />
-                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectProject(project);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onSelectProject(project);
+                        }
+                      }}
+                      aria-label={`Explore Case Study for ${project.title}`}
+                      className="text-emerald-400 group-hover:text-emerald-300 group-hover:translate-x-1 transition-all inline-flex items-center gap-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-emerald-400/60 rounded px-1 -mx-1 cursor-pointer"
+                    >
+                      <span>Explore Case Study</span>
+                      <span className="text-xs font-bold leading-none">&nearr;</span>
+                    </button>
                     <span className="text-white/30 uppercase tracking-wider text-[9px] flex items-center gap-1">
                       <Sparkles size={10} className="text-emerald-400" />
                       INTERACTIVE

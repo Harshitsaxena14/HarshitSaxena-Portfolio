@@ -1,214 +1,18 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import Image from "next/image";
-import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform, useSpring } from "framer-motion";
 import {
   Github,
   ExternalLink,
-  ChevronLeft,
-  ChevronRight,
-  ArrowLeft,
-  Terminal,
-  Layers,
-  Cpu,
-  CheckCircle2,
-  X,
   Sparkles,
 } from "lucide-react";
 import CardFanCarousel from "@/components/ui/card-fan-carousel";
+import CaseStudyWorkspace from "@/components/case-study/CaseStudyWorkspace";
+import { Project } from "@/types/caseStudy";
+import { PROJECTS } from "@/data/projectsData";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export interface Project {
-  id: string;
-  title: string;
-  tagline: string;
-  description: string;
-  problem: string;
-  architecture: string;
-  features: string[];
-  challenges: string;
-  lessons: string;
-  tech: string[];
-  accentHue: number;
-  liveUrl?: string;
-  githubUrl?: string;
-  isFeatured?: boolean;
-  featuredBadge?: string;
-  previewImage?: string;
-  logoSvg?: string;
-  verifiedModules?: { label: string; detail: string }[];
-}
-
-// ─── Real Authentic Project Data ──────────────────────────────────────────────
-
-const PROJECTS: Project[] = [
-  {
-    id: "mindlens",
-    title: "MindLens",
-    tagline: "AI Student Wellbeing Analyzer (Deployed)",
-    description:
-      "Developed and deployed an AI-powered student wellbeing platform featuring sentiment analysis, mood detection, and burnout prediction with an interactive insights dashboard.",
-    problem:
-      "Students often experience unaddressed burnout and mental strain without early indicators or accessible wellbeing tracking tools.",
-    architecture:
-      "Streamlit dashboard interface integrated with TensorFlow NLP pipeline for real-time sentiment analysis, mood detection, and predictive burnout scoring.",
-    features: [
-      "Deployed AI-powered student wellbeing platform",
-      "Sentiment analysis & mood detection NLP pipeline",
-      "Burnout prediction & trend scoring",
-      "Interactive Streamlit dashboard for real-time insights",
-    ],
-    challenges:
-      "Fine-tuning sentiment classification models to accurately capture subtle emotional cues in student self-reported entries.",
-    lessons:
-      "Effective AI applications require accessible visual feedback. Combining Streamlit with TensorFlow enabled rapid deployment of actionable insights.",
-    tech: ["Python", "TensorFlow", "NLP", "Streamlit"],
-    accentHue: 160,
-    githubUrl: "https://github.com/harshitsaxena",
-  },
-  {
-    id: "harshitos-portfolio",
-    title: "HarshitOS Portfolio",
-    tagline: "Dark editorial interactive engineer profile",
-    description:
-      "A high-performance progressive web application showcasing systems engineering, algorithms, and real-time LeetCode profile metrics.",
-    problem:
-      "Standard template portfolios are static and fail to demonstrate real frontend engineering depth, systems craft, or interactive polish.",
-    architecture:
-      "Next.js 14 App Router, TypeScript, Framer Motion, and serverless API integration with LeetCode GraphQL API.",
-    features: [
-      "Terminal boot protocol with reduced motion support",
-      "Apple-inspired floating dock navigation",
-      "Live LeetCode GraphQL analytics & heatmaps",
-      "Command Palette (⌘K) quick navigation",
-    ],
-    challenges:
-      "Building smooth 60 FPS layout transitions while maintaining 100% hydration consistency and zero server-side rendering errors.",
-    lessons:
-      "Restraint is the hallmark of great design. 70% content hierarchy, 20% interaction motion, and 10% spatial depth creates a lasting impression.",
-    tech: ["Next.js 14", "TypeScript", "Tailwind CSS", "Framer Motion", "GraphQL"],
-    accentHue: 45,
-    githubUrl: "https://github.com/harshitsaxena",
-  },
-  {
-    id: "codement",
-    title: "CodeMent",
-    tagline: "Adaptive DSA Learning Platform & Extension",
-    description:
-      "A structured, adaptive DSA learning platform designed to help developers master Data Structures & Algorithms through a guided 25+ topic roadmap, progress tracking, an AI mentor powered by Google Gemini, and a Manifest V3 Chrome extension for live LeetCode synchronization.",
-    problem:
-      "Most developers face severe friction learning DSA: solving random LeetCode problems without structured topic progression, forgetting previously solved patterns, lacking weak-topic diagnosis, and having no contextual AI guidance while actively solving.",
-    architecture:
-      "Full-stack decoupled architecture with a React 19 + Vite + Tailwind CSS frontend, Node.js + Express backend with MongoDB & JWT authentication, Google Gemini AI integration, and a Manifest V3 Chrome extension injecting content scripts into leetcode.com/problems/* to detect problem slugs and sync learning telemetry.",
-    features: [
-      "Structured 25+ topic DSA roadmap with progressive unlock mechanics",
-      "AI Mentor powered by Google Gemini for conceptual hints & problem breakdowns",
-      "Manifest V3 Chrome extension detecting active LeetCode problems in real time",
-      "Progress dashboard with topic mastery telemetry & spaced repetition revision",
-      "Mission planner and contest tracking with JWT-authenticated user accounts",
-    ],
-    challenges:
-      "Bridging the decoupled browser extension runtime with the web app state to reliably detect LeetCode problem slugs and synchronize user progress without latency or auth desync.",
-    lessons:
-      "Connecting structured curriculum directly into the developer's live problem-solving context (via browser extension) yields vastly higher retention than isolated problem databases.",
-    tech: [
-      "React 19",
-      "Vite",
-      "Node.js",
-      "Express",
-      "MongoDB",
-      "Gemini AI",
-      "Chrome Extension (MV3)",
-      "Tailwind CSS",
-    ],
-    accentHue: 270,
-    githubUrl: "https://github.com/Harshitsaxena14/CodeMent",
-    isFeatured: true,
-    featuredBadge: "FLAGSHIP // ADAPTIVE DSA PLATFORM",
-    previewImage: "/projects/codement/hero.png",
-    logoSvg: "/projects/codement/logo.svg",
-    verifiedModules: [
-      { label: "CURRICULUM", detail: "25+ Topics & Unlocks" },
-      { label: "AI MENTOR", detail: "Gemini Context Hints" },
-      { label: "SYNC EXTENSION", detail: "LeetCode Manifest V3" },
-      { label: "AUTH & DATA", detail: "Express + Mongo + JWT" },
-    ],
-  },
-  {
-    id: "sahayak",
-    title: "SAHAYAK",
-    tagline: "AI Assistance & Accessibility Platform",
-    description:
-      "An AI assistant platform designed to provide automated query resolution, task guidance, and intelligent workflow support using Natural Language Processing.",
-    problem:
-      "Users and students often struggle to find immediate, context-aware guidance for technical workflows and academic queries.",
-    architecture:
-      "Intelligent assistance web application built with Python backend, NLP query parser, and responsive web interface for instant task assistance.",
-    features: [
-      "AI-powered assistance & query response system",
-      "Automated task guidance & workflow support",
-      "Natural Language Processing (NLP) integration",
-      "Responsive web user interface",
-    ],
-    challenges:
-      "Handling ambiguous user prompts and mapping them efficiently to structured response workflows.",
-    lessons:
-      "Clear intent classification combined with conversational feedback creates an intuitive user assistance experience.",
-    tech: ["Python", "AI/ML", "NLP", "Web Development"],
-    accentHue: 210,
-    githubUrl: "https://github.com/harshitsaxena",
-  },
-  {
-    id: "mediflow",
-    title: "MediFlow",
-    tagline: "Medicine Inventory Management Platform (In Progress)",
-    description:
-      "Healthcare inventory management web application. Emergency Mode assists hospitals in discovering nearby pharmacies with required critical medicines in real time.",
-    problem:
-      "During critical medical emergencies, hospitals struggle to rapidly verify which nearby pharmacies stock urgent required medicines.",
-    architecture:
-      "Web application architecture backed by PostgreSQL database. Emergency procurement module matches inventory queries against geolocation data.",
-    features: [
-      "Real-time healthcare inventory management",
-      "Emergency Mode for instant nearby pharmacy medicine discovery",
-      "Streamlined hospital procurement workflow",
-      "Relational database schema for medicine stock tracking",
-    ],
-    challenges:
-      "Designing an efficient query pattern for rapid emergency lookup across pharmacy inventory databases.",
-    lessons:
-      "High-availability data design is critical in healthcare tech. Clear data modeling reduces latency when time is essential.",
-    tech: ["Python", "Web Development", "Databases", "PostgreSQL"],
-    accentHue: 200,
-    githubUrl: "https://github.com/harshitsaxena",
-  },
-  {
-    id: "fashion-mnist",
-    title: "Fashion-MNIST Image Classifier",
-    tagline: "CNN Deep Learning Model",
-    description:
-      "Built a Convolutional Neural Network (CNN) image classification model using TensorFlow, achieving 86% accuracy in 5 epochs with data preprocessing.",
-    problem:
-      "Demonstrating computer vision fundamentals and efficient neural network training on image datasets without overfitting.",
-    architecture:
-      "Multi-layer Convolutional Neural Network (CNN) built with TensorFlow/Keras, incorporating max-pooling, normalization, and Softmax classification.",
-    features: [
-      "CNN architecture engineered in TensorFlow",
-      "86% classification accuracy achieved in 5 epochs",
-      "Image normalization & tensor preprocessing pipeline",
-      "Feature extraction and evaluation metrics",
-    ],
-    challenges:
-      "Optimizing hyper-parameters and learning rate schedules to maximize accuracy within 5 training epochs.",
-    lessons:
-      "Data preprocessing and normalization directly impact deep learning model convergence speed and test accuracy.",
-    tech: ["Python", "TensorFlow", "CNN", "Deep Learning"],
-    accentHue: 270,
-    githubUrl: "https://github.com/harshitsaxena",
-  },
-];
+export type { Project };
 
 // ─── Spatial Card Position Configurations for Floating Field ─────────────────
 
@@ -426,10 +230,25 @@ function FloatingSpatialCard({
             </div>
 
             <div className="flex items-center justify-between pt-1 font-mono text-[11px]">
-              <span className="text-emerald-400 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 font-semibold">
-                <span>EXPLORE CASE STUDY</span>
-                <span>&rarr;</span>
-              </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSelect(project);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onSelect(project);
+                  }
+                }}
+                aria-label={`Explore Case Study for ${project.title}`}
+                className="text-emerald-400 group-hover:text-emerald-300 group-hover:translate-x-1 transition-all inline-flex items-center gap-1.5 font-bold focus:outline-none focus:ring-1 focus:ring-emerald-400/60 rounded px-1 -mx-1 cursor-pointer"
+              >
+                <span>Explore Case Study</span>
+                <span className="text-xs font-bold leading-none">&nearr;</span>
+              </button>
               <span className="text-white/30 uppercase tracking-wider">CASE STUDY</span>
             </div>
           </div>
@@ -462,22 +281,6 @@ export default function ProjectCaseStudy() {
     setSelectedProject(null);
   }, []);
 
-  const total = PROJECTS.length;
-
-  const handleNextProject = useCallback(() => {
-    if (!selectedProject) return;
-    const currentIndex = PROJECTS.findIndex((p) => p.id === selectedProject.id);
-    const nextIndex = (currentIndex + 1) % total;
-    setSelectedProject(PROJECTS[nextIndex]);
-  }, [selectedProject, total]);
-
-  const handlePrevProject = useCallback(() => {
-    if (!selectedProject) return;
-    const currentIndex = PROJECTS.findIndex((p) => p.id === selectedProject.id);
-    const prevIndex = (currentIndex - 1 + total) % total;
-    setSelectedProject(PROJECTS[prevIndex]);
-  }, [selectedProject, total]);
-
   return (
     <section
       ref={sectionRef}
@@ -508,241 +311,13 @@ export default function ProjectCaseStudy() {
         {/* Spatial Card Fan Carousel Component */}
         <CardFanCarousel projects={PROJECTS} onSelectProject={handleSelectProject} />
 
-        {/* Case Study Spatial Focus Modal */}
-        <AnimatePresence>
-          {selectedProject && (
-            <motion.div
-              key="case-study-modal"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-lg flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
-              onClick={handleCloseDetail}
-            >
-              <motion.div
-                initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.94, y: 24 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 24 }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-[#09090e] border border-white/10 rounded-2xl p-6 sm:p-10 space-y-8 shadow-2xl relative select-text"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Top Nav inside modal */}
-                <div className="flex items-center justify-between border-b border-white/[0.08] pb-5 sticky top-0 bg-[#09090e]/95 backdrop-blur-md pt-1 z-10">
-                  <button
-                    onClick={handleCloseDetail}
-                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-mono text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 bg-emerald-950/30 transition-all cursor-pointer"
-                  >
-                    <ArrowLeft size={14} />
-                    <span>BACK TO PROJECT FIELD</span>
-                  </button>
-
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={handlePrevProject}
-                      aria-label="Previous project"
-                      className="p-1.5 rounded-md border border-white/10 hover:bg-white/10 text-white/70 hover:text-white transition-all cursor-pointer"
-                    >
-                      <ChevronLeft size={16} />
-                    </button>
-                    <span className="font-mono text-xs text-text-muted">
-                      0{PROJECTS.findIndex((p) => p.id === selectedProject.id) + 1} / 0{total}
-                    </span>
-                    <button
-                      onClick={handleNextProject}
-                      aria-label="Next project"
-                      className="p-1.5 rounded-md border border-white/10 hover:bg-white/10 text-white/70 hover:text-white transition-all cursor-pointer"
-                    >
-                      <ChevronRight size={16} />
-                    </button>
-                    <button
-                      onClick={handleCloseDetail}
-                      className="p-1.5 rounded-md border border-white/10 hover:bg-white/10 text-white/50 hover:text-white transition-all cursor-pointer"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Header info */}
-                <div className="space-y-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    {selectedProject.isFeatured ? (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-500/40 text-purple-300 font-mono text-[11px] font-bold uppercase tracking-wider">
-                        <Sparkles size={12} className="text-purple-400 animate-pulse" />
-                        <span>{selectedProject.featuredBadge || "FLAGSHIP PROJECT"}</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="w-2.5 h-2.5 rounded-full"
-                          style={{ backgroundColor: `hsl(${selectedProject.accentHue}, 75%, 55%)` }}
-                        />
-                        <span className="font-mono text-xs text-emerald-400 font-semibold uppercase tracking-wider">
-                          {selectedProject.tagline}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-                    {selectedProject.title}
-                  </h3>
-                  <p className="text-sm sm:text-base text-text-secondary leading-relaxed font-sans font-light">
-                    {selectedProject.description}
-                  </p>
-                </div>
-
-                {/* Verified Modules Telemetry Strip (for CodeMent Flagship) */}
-                {selectedProject.verifiedModules && (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
-                    {selectedProject.verifiedModules.map((m, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-xl border border-purple-500/20 bg-purple-950/20 space-y-1"
-                      >
-                        <span className="font-mono text-[9px] text-purple-300/80 uppercase tracking-widest block">
-                          {m.label}
-                        </span>
-                        <span className="font-mono text-xs font-bold text-white block">
-                          {m.detail}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Authentic Visual Preview (if project has previewImage asset) */}
-                {selectedProject.previewImage && (
-                  <div className="rounded-xl border border-white/[0.08] bg-black/60 p-4 space-y-3">
-                    <div className="flex items-center justify-between font-mono text-[10px] text-white/40 pb-2 border-b border-white/[0.06]">
-                      <span className="flex items-center gap-1.5 text-purple-400 font-semibold">
-                        <Sparkles size={11} />
-                        AUTHENTIC PLATFORM ASSET // CODEMENT HERO ARCHIVE
-                      </span>
-                      <span className="text-white/30">SOURCE: CODEMENT/FRONTEND/SRC/ASSETS</span>
-                    </div>
-                    <div className="flex items-center justify-center p-4 bg-[#050508] rounded-lg border border-white/[0.04]">
-                      <Image
-                        src={selectedProject.previewImage}
-                        alt="CodeMent Platform Asset"
-                        width={343}
-                        height={361}
-                        className="max-h-48 w-auto object-contain rounded drop-shadow-[0_0_25px_rgba(168,85,247,0.3)]"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Grid Details */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                  <div className="p-6 rounded-xl border border-white/[0.08] bg-black/50 space-y-2">
-                    <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-semibold uppercase tracking-wider">
-                      <Terminal size={14} />
-                      <span>01 // THE PROBLEM</span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-text-secondary leading-relaxed font-sans font-normal">
-                      {selectedProject.problem}
-                    </p>
-                  </div>
-
-                  <div className="p-6 rounded-xl border border-white/[0.08] bg-black/50 space-y-2">
-                    <div className="flex items-center gap-2 text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider">
-                      <Layers size={14} />
-                      <span>02 // SYSTEM ARCHITECTURE</span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-text-secondary leading-relaxed font-sans font-normal">
-                      {selectedProject.architecture}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Features List */}
-                <div className="p-6 rounded-xl border border-white/[0.08] bg-black/50 space-y-4">
-                  <div className="flex items-center gap-2 text-purple-400 font-mono text-xs font-semibold uppercase tracking-wider">
-                    <Cpu size={14} />
-                    <span>03 // KEY ENGINEERING FEATURES</span>
-                  </div>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {selectedProject.features.map((feat, i) => (
-                      <li key={i} className="flex items-start gap-2 text-xs text-text-secondary font-sans">
-                        <CheckCircle2 size={14} className="text-emerald-400 shrink-0 mt-0.5" />
-                        <span>{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Lessons & Challenges */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-5 rounded-xl border border-white/[0.08] bg-black/50 space-y-2">
-                    <span className="font-mono text-xs font-semibold text-amber-400 uppercase tracking-wider block">
-                      TECHNICAL CHALLENGES
-                    </span>
-                    <p className="text-xs text-text-secondary leading-relaxed font-sans">
-                      {selectedProject.challenges}
-                    </p>
-                  </div>
-
-                  <div className="p-5 rounded-xl border border-white/[0.08] bg-black/50 space-y-2">
-                    <span className="font-mono text-xs font-semibold text-emerald-400 uppercase tracking-wider block">
-                      KEY LESSONS LEARNED
-                    </span>
-                    <p className="text-xs text-text-secondary leading-relaxed font-sans">
-                      {selectedProject.lessons}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Tech Stack & Links */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-white/[0.08]">
-                  <div className="flex flex-wrap gap-2">
-                    {selectedProject.tech.map((t) => (
-                      <span
-                        key={t}
-                        className="font-mono text-xs text-text-secondary bg-white/[0.04] border border-white/10 px-2.5 py-1 rounded"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center gap-3 shrink-0">
-                    {!selectedProject.liveUrl && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-mono text-white/50 bg-white/[0.04] border border-white/[0.08]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                        <span>LOCAL REPO VERIFIED</span>
-                      </span>
-                    )}
-
-                    {selectedProject.liveUrl && (
-                      <a
-                        href={selectedProject.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-medium text-emerald-400 bg-emerald-950/40 border border-emerald-500/30 hover:bg-emerald-900/40 transition-all"
-                      >
-                        <ExternalLink size={14} />
-                        <span>LIVE DEMO</span>
-                      </a>
-                    )}
-
-                    {selectedProject.githubUrl && (
-                      <a
-                        href={selectedProject.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-mono font-medium text-white bg-white/10 hover:bg-white/20 transition-all"
-                      >
-                        <Github size={14} />
-                        <span>SOURCE CODE</span>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Full-Screen Four-Tab Interactive Case Study Workspace Overlay */}
+        <CaseStudyWorkspace
+          project={selectedProject}
+          projects={PROJECTS}
+          onClose={handleCloseDetail}
+          onSelectProject={handleSelectProject}
+        />
       </div>
     </section>
   );

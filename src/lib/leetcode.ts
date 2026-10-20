@@ -36,6 +36,48 @@ export interface LeetCodeStats {
   contestHistory: ContestPoint[];
 }
 
+interface SubmissionStat {
+  difficulty: string;
+  count?: number;
+  submissions?: number;
+}
+
+interface ContestHistoryEntry {
+  attended?: boolean;
+  trendDirection?: string;
+  rating?: number;
+  ranking?: number;
+  contest?: {
+    title?: string;
+    startTime?: number;
+  };
+}
+
+interface LeetCodeGraphQLResponse {
+  errors?: Array<{ message?: string }>;
+  data?: {
+    matchedUser?: {
+      username: string;
+      profile?: {
+        realName?: string;
+        ranking?: number;
+      };
+      submitStats?: {
+        acSubmissionNum?: SubmissionStat[];
+        totalSubmissionNum?: SubmissionStat[];
+      };
+      submissionCalendar?: string | Record<string, number>;
+    };
+    allQuestionsCount?: SubmissionStat[];
+    userContestRanking?: {
+      attendedContestsCount?: number;
+      rating?: number;
+      topPercentage?: number;
+    };
+    userContestRankingHistory?: ContestHistoryEntry[];
+  };
+}
+
 const LEETCODE_GRAPHQL_ENDPOINT = "https://leetcode.com/graphql";
 
 const USER_DATA_QUERY = `
@@ -194,7 +236,7 @@ export async function fetchLeetCodeStats(targetUsername?: string): Promise<LeetC
       throw new Error(`LeetCode GraphQL responded with HTTP status ${response.status}`);
     }
 
-    const json = await response.json();
+    const json = (await response.json()) as LeetCodeGraphQLResponse;
     if (json.errors && json.errors.length > 0) {
       throw new Error(`LeetCode GraphQL error: ${json.errors[0].message}`);
     }
@@ -212,9 +254,9 @@ export async function fetchLeetCodeStats(targetUsername?: string): Promise<LeetC
     const contestRanking = dataObj.userContestRanking;
     const rawContestHistory = dataObj.userContestRankingHistory || [];
 
-    const getAcCount = (diff: string) => acStats.find((s: any) => s.difficulty === diff)?.count || 0;
-    const getQuestionTotal = (diff: string) => allQuestions.find((q: any) => q.difficulty === diff)?.count || 0;
-    const getTotalSubs = (diff: string) => totalStats.find((s: any) => s.difficulty === diff)?.submissions || 0;
+    const getAcCount = (diff: string) => acStats.find((s) => s.difficulty === diff)?.count || 0;
+    const getQuestionTotal = (diff: string) => allQuestions.find((q) => q.difficulty === diff)?.count || 0;
+    const getTotalSubs = (diff: string) => totalStats.find((s) => s.difficulty === diff)?.submissions || 0;
 
     const totalSolved = getAcCount("All");
     const easySolved = getAcCount("Easy");
@@ -266,8 +308,8 @@ export async function fetchLeetCodeStats(targetUsername?: string): Promise<LeetC
 
     // Parse contest history
     const contestHistory: ContestPoint[] = rawContestHistory
-      .filter((c: any) => c.attended)
-      .map((c: any) => ({
+      .filter((c) => c.attended)
+      .map((c) => ({
         contestTitle: c.contest?.title || "Contest",
         rating: Math.round(c.rating || 0),
         ranking: c.ranking || 0,
